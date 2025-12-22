@@ -1,16 +1,17 @@
+#include "thread_pool.cpp"
 #include <arpa/inet.h>
 #include <cstdio>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h> //bind
 #include <vector>
-
 // Connect to map and reduce workers. have a total number of map and reduce
 // workers. parse and break up tasks. take input file and break it up. execute
 // map and reduce workers
 
 // protocol: <byte length, json data>
 // default port 6967
+int handle_connection(int fd) { return -1; }
 
 class BuildCluster {
 public:
