@@ -5,6 +5,9 @@
 #include <netinet/in.h>
 #include <sys/socket.h> //bind
 #include <vector>
+#include <unistd.h>
+
+
 // Connect to map and reduce workers. have a total number of map and reduce
 // workers. parse and break up tasks. take input file and break it up. execute
 // map and reduce workers
@@ -15,7 +18,7 @@ int handle_connection(int fd) { return -1; }
 
 class BuildCluster {
 public:
-  int port = 6967;
+  int port = 6767;
   BuildCluster(std::string build_file) {
 
     std::cout << build_file << std::endl;
@@ -36,16 +39,40 @@ public:
       perror("bind failed");
       std::exit(EXIT_FAILURE);
     }
+
+    
+    listen(socketfd, SOMAXCONN);
+
+
+    while (true){
+
+      int client_fd = accept(socketfd, NULL, NULL);
+      std::cout << "accepted client: " << client_fd << std::endl;
+
+    }
+
+    
+
+
+
+
   }
 };
 
+
+void help(){
+  std::cout << "example: ./controller <port>" << std::endl;
+}
 int main(int argc, char *argv[]) {
 
   std::vector<std::string> input(argv, argv + argc);
 
   if (input.size() != 2) {
 
-    std::cout << "incorrect number of arguments " << input.size() << std::endl;
+    std::cout << "Incorrect number of arguments " << input.size() << std::endl;
+    help();
+
+
 
     exit(1);
   }
@@ -53,4 +80,5 @@ int main(int argc, char *argv[]) {
   std::string file_path = input[1];
 
   BuildCluster cluster = BuildCluster(file_path);
+
 }
