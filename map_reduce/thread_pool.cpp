@@ -4,9 +4,9 @@ class ThreadPool {
 public:
   void start();
   void queue_job(std::function<void()> &job);
+
   void stop();
   bool busy();
-
 private:
   void thread_loop();
   bool should_terminate = false;
