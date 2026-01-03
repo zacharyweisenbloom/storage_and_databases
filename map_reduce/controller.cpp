@@ -40,10 +40,8 @@ public:
       std::exit(EXIT_FAILURE);
     }
 
-    
+
     listen(socketfd, SOMAXCONN);
-
-
     while (true){
 
       int client_fd = accept(socketfd, NULL, NULL);
@@ -52,10 +50,6 @@ public:
     }
 
     
-
-
-
-
   }
 };
 
