@@ -7,13 +7,15 @@
 class Worker {
 
   int socketfd;
-  int server_sock;
+  int server_port;
   struct sockaddr_in addr{};
 
 public:
-  Worker(int socket_int) { server_sock = socket_int; }
+  Worker(int port) { server_port = port; }
 
-  int connect_to_server(int server_port) {
+  int connect_to_server(int port = 6767) {
+
+    server_port = port;
 
     int socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd < 0) {
@@ -21,12 +23,18 @@ public:
     }
     addr.sin_family = AF_INET;
     addr.sin_port = htons(server_port);
+    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
-    if (connect(server_sock, (sockaddr *)&addr, sizeof(addr))) {
+    if (connect(socketfd, (sockaddr *)&addr, sizeof(addr)) < 0) {
+      std::cout << "failed to connect" << std::endl;
       return 1;
     }
+    std::cout << "connection succeeded" << std::endl;
     return 0;
   }
 };
 
-int main() { Worker worker{6767}; }
+int main() {
+  Worker worker{6767};
+  worker.connect_to_server(6767);
+}

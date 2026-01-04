@@ -4,9 +4,8 @@
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h> //bind
-#include <vector>
 #include <unistd.h>
-
+#include <vector>
 
 // Connect to map and reduce workers. have a total number of map and reduce
 // workers. parse and break up tasks. take input file and break it up. execute
@@ -18,10 +17,7 @@ int handle_connection(int fd) { return -1; }
 
 class BuildCluster {
 public:
-  int port = 6767;
-  BuildCluster(std::string build_file) {
-
-    std::cout << build_file << std::endl;
+  BuildCluster(int server_port = 6767) {
 
     // create the socket construct
     //  AF_INET = IPV4
@@ -30,7 +26,7 @@ public:
 
     struct sockaddr_in addr{};
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);
+    addr.sin_port = htons(server_port);
 
     // will accept connections from anything
     addr.sin_addr.s_addr = INADDR_ANY;
@@ -40,23 +36,16 @@ public:
       std::exit(EXIT_FAILURE);
     }
 
-
     listen(socketfd, SOMAXCONN);
-    while (true){
+    while (true) {
 
       int client_fd = accept(socketfd, NULL, NULL);
       std::cout << "accepted client: " << client_fd << std::endl;
-
     }
-
-    
   }
 };
 
-
-void help(){
-  std::cout << "example: ./controller <port>" << std::endl;
-}
+void help() { std::cout << "example: ./controller <port>" << std::endl; }
 int main(int argc, char *argv[]) {
 
   std::vector<std::string> input(argv, argv + argc);
@@ -66,13 +55,11 @@ int main(int argc, char *argv[]) {
     std::cout << "Incorrect number of arguments " << input.size() << std::endl;
     help();
 
-
-
     exit(1);
   }
 
-  std::string file_path = input[1];
+  int server_port = std::stoi(input[1]);
+  std::cout << server_port << std::endl;
 
-  BuildCluster cluster = BuildCluster(file_path);
-
+  BuildCluster cluster = BuildCluster(6767);
 }
