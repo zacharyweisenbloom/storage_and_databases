@@ -10,8 +10,15 @@ class Worker {
   int server_port;
   struct sockaddr_in addr{};
 
+  // map is zero reduce is one
+  bool is_map;
+
 public:
   Worker(int port) { server_port = port; }
+
+  int get_data(std::string file_path);
+  int map();
+  int reduce();
 
   int connect_to_server(int port = 6767) {
 
