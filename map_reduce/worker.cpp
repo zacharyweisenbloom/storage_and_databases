@@ -1,45 +1,32 @@
+#include "worker.h"
 #include <arpa/inet.h>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <vector>
-class Worker {
 
-  int socketfd;
-  int server_port;
-  struct sockaddr_in addr{};
+Worker::Worker(int port) { server_port = port; }
 
-  // map is zero reduce is one
-  bool is_map;
+int Worker::connect_to_server(int port) {
 
-public:
-  Worker(int port) { server_port = port; }
+  server_port = port;
 
-  int get_data(std::string file_path);
-  int map();
-  int reduce();
-
-  int connect_to_server(int port = 6767) {
-
-    server_port = port;
-
-    int socketfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketfd < 0) {
-      std::cout << "socket failed too bind" << std::endl;
-    }
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(server_port);
-    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
-
-    if (connect(socketfd, (sockaddr *)&addr, sizeof(addr)) < 0) {
-      std::cout << "failed to connect" << std::endl;
-      return 1;
-    }
-    std::cout << "connection succeeded" << std::endl;
-    return 0;
+  int socketfd = socket(AF_INET, SOCK_STREAM, 0);
+  if (socketfd < 0) {
+    std::cout << "socket failed too bind" << std::endl;
   }
-};
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(server_port);
+  inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+  if (connect(socketfd, (sockaddr *)&addr, sizeof(addr)) < 0) {
+    std::cout << "failed to connect" << std::endl;
+    return 1;
+  }
+  std::cout << "connection succeeded" << std::endl;
+  return 0;
+}
 
 int main() {
   Worker worker{6767};

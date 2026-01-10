@@ -1,4 +1,4 @@
-PARAMS = -Wall -g -v
+PARAMS = -Wall #-g -v
 all: controller worker
 controller: controller.cpp
 	g++ controller.cpp -o controller $(PARAMS)

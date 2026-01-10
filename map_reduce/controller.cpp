@@ -1,3 +1,4 @@
+#include "controller.h"
 #include "thread_pool.cpp"
 #include <arpa/inet.h>
 #include <cstdio>
@@ -6,7 +7,6 @@
 #include <sys/socket.h> //bind
 #include <unistd.h>
 #include <vector>
-
 // Connect to map and reduce workers. have a total number of map and reduce
 // workers. parse and break up tasks. take input file and break it up. execute
 // map and reduce workers
@@ -15,37 +15,48 @@
 // default port 6967
 int handle_connection(int fd) { return -1; }
 
-class BuildCluster {
-public:
-  BuildCluster(int server_port = 6767) {
-
-    // create the socket construct
-    //  AF_INET = IPV4
-    //  SOCK_STREAM = TCP
-    int socketfd = socket(AF_INET, SOCK_STREAM, 0);
-
-    struct sockaddr_in addr{};
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(server_port);
-
-    // will accept connections from anything
-    addr.sin_addr.s_addr = INADDR_ANY;
-
-    if (bind(socketfd, (sockaddr *)&addr, sizeof(addr)) < 0) {
-      perror("bind failed");
-      std::exit(EXIT_FAILURE);
-    }
-
-    listen(socketfd, SOMAXCONN);
-    while (true) {
-
-      int client_fd = accept(socketfd, NULL, NULL);
-      std::cout << "accepted client: " << client_fd << std::endl;
-    }
-  }
+struct Worker {
+  int client_fd;
+  struct sockaddr_in addr;
 };
 
+int Controller::start_server(int server_port) {
+
+  // create the socket construct
+  //  AF_INET = IPV4
+  //  SOCK_STREAM = TCP
+  int socketfd = socket(AF_INET, SOCK_STREAM, 0);
+
+  struct sockaddr_in addr{};
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(server_port);
+
+  // will accept connections from anything
+  addr.sin_addr.s_addr = INADDR_ANY;
+
+  if (bind(socketfd, (sockaddr *)&addr, sizeof(addr)) < 0) {
+    perror("bind failed");
+    std::exit(EXIT_FAILURE);
+  }
+
+  listen(socketfd, SOMAXCONN);
+
+  while (true) {
+    struct Worker worker;
+    socklen_t length = sizeof(worker.addr);
+    int client_fd = accept(socketfd, (struct sockaddr *)&worker.addr, &length);
+    worker.client_fd = client_fd;
+    client_list.push_back(worker);
+
+    std::cout << "accepted client: " << client_fd << std::endl;
+  }
+  for (int i = 0; i < client_list.size(); i++) {
+    std::cout <<
+  }
+}
+
 void help() { std::cout << "example: ./controller <port>" << std::endl; }
+
 int main(int argc, char *argv[]) {
 
   std::vector<std::string> input(argv, argv + argc);
@@ -60,6 +71,5 @@ int main(int argc, char *argv[]) {
 
   int server_port = std::stoi(input[1]);
   std::cout << server_port << std::endl;
-
-  BuildCluster cluster = BuildCluster(6767);
+  Controller controller{};
 }
