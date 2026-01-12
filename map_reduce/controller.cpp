@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "protocol.h"
 #include "thread_pool.cpp"
 #include <arpa/inet.h>
 #include <cstdio>
@@ -13,8 +14,10 @@
 
 // protocol: <byte length, json data>
 // default port 6967
+
 int handle_connection(int fd) { return -1; }
 
+// C++ compiler does not garantee the byte order of a struct. the compiler does.
 struct Worker {
   int client_fd;
   struct sockaddr_in addr;
@@ -47,11 +50,7 @@ int Controller::start_server(int server_port) {
     int client_fd = accept(socketfd, (struct sockaddr *)&worker.addr, &length);
     worker.client_fd = client_fd;
     client_list.push_back(worker);
-
     std::cout << "accepted client: " << client_fd << std::endl;
-  }
-  for (int i = 0; i < client_list.size(); i++) {
-    std::cout <<
   }
 }
 
@@ -72,4 +71,5 @@ int main(int argc, char *argv[]) {
   int server_port = std::stoi(input[1]);
   std::cout << server_port << std::endl;
   Controller controller{};
+  controller.start_server();
 }
