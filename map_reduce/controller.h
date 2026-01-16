@@ -1,7 +1,6 @@
 #include <vector>
 
-class Controller {
-
+class ResourceManager {
   std::vector<struct Worker> client_list;
 
 public:

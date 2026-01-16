@@ -23,7 +23,7 @@ struct Worker {
   struct sockaddr_in addr;
 };
 
-int Controller::start_server(int server_port) {
+int ResourceManager::start_server(int server_port) {
 
   // create the socket construct
   //  AF_INET = IPV4
@@ -70,6 +70,6 @@ int main(int argc, char *argv[]) {
 
   int server_port = std::stoi(input[1]);
   std::cout << server_port << std::endl;
-  Controller controller{};
-  controller.start_server();
+  ResourceManager manager{};
+  manager.start_server();
 }
