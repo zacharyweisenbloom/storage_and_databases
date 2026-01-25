@@ -5,9 +5,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-class Worker {
+class WorkerNode {
 
-  int socketfd;
   int server_port;
   struct sockaddr_in addr{};
 
@@ -15,9 +14,9 @@ class Worker {
   WorkerType type;
 
 public:
-  Worker(int port);
-  int get_data(std::string file_path);
-  int map();
-  int reduce();
+  int socketfd;
+
+  WorkerNode(int port);
   int connect_to_server(int port = 6767);
+  int get_data(std::string file_path);
 };

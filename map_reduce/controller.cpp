@@ -14,7 +14,7 @@
 
 // protocol: <byte length, json data>
 // default port 6967
-
+//
 int handle_connection(int fd) { return -1; }
 
 // C++ compiler does not garantee the byte order of a struct. the compiler does.

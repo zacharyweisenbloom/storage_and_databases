@@ -6,9 +6,9 @@
 #include <unistd.h>
 #include <vector>
 
-Worker::Worker(int port) { server_port = port; }
+WorkerNode::WorkerNode(int port) { server_port = port; }
 
-int Worker::connect_to_server(int port) {
+int WorkerNode::connect_to_server(int port) {
 
   server_port = port;
 
@@ -16,6 +16,7 @@ int Worker::connect_to_server(int port) {
   if (socketfd < 0) {
     std::cout << "socket failed too bind" << std::endl;
   }
+
   addr.sin_family = AF_INET;
   addr.sin_port = htons(server_port);
   inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
@@ -29,6 +30,16 @@ int Worker::connect_to_server(int port) {
 }
 
 int main() {
-  Worker worker{6767};
-  worker.connect_to_server(6767);
+  // Establish connection with server
+  WorkerNode worker_node{6767};
+  if (worker_node.connect_to_server(6767) != 0) {
+    exit(-1);
+  }
+
+  std::vector<char> buf(4096);
+
+  // Fixed length header, follwoed by variable length message.
+  while (true) {
+    ssize_t n = recv(worker_node.socketfd, &buf, 4096, 0);
+  }
 }
