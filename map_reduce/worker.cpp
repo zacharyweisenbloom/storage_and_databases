@@ -25,6 +25,7 @@ int WorkerNode::connect_to_server(int port) {
     std::cout << "failed to connect" << std::endl;
     return 1;
   }
+
   std::cout << "connection succeeded" << std::endl;
   return 0;
 }
@@ -39,6 +40,7 @@ int main() {
   std::vector<char> buf(4096);
 
   // Fixed length header, follwoed by variable length message.
+  //
   while (true) {
     ssize_t n = recv(worker_node.socketfd, &buf, 4096, 0);
   }
